@@ -1,6 +1,6 @@
-let storage_Key = "todos"
+const storage_Key = "todos"
 
-let todoStorage = {
+const todoStorage = {
   fetch:function(){
     let todos = JSON.parse(
       localStorage.getItem(storage_Key) || '[]'
@@ -11,5 +11,9 @@ let todoStorage = {
 
   save:function(todos){
     localStorage.setItem(storage_Key,JSON.stringify(todos));
+  },
+
+  remove:function(){
+    localStorage.removeItem(storage_Key);
   }
 }

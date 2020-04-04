@@ -11,11 +11,20 @@
   </head>
 
   <body>
-    <div id="Input">
       <h2>Todos</h2>
+      <div id="item">
+      
+      <div id="item_Submit">
       <input id="input" type="text" ref="input" @change="onChange" @keypress.enter="onKeypressEnter"  maxlength='10' @keypress.space="onClickSpace" @input="onInput">
       <button v-on:click="doAdd" id="submitButton" class="btn btn-primary">Submit</button>
+      </div>
+
+      <div id="item_Button" class="float-right">
+      <button v-on:click="checkAll" id="checkAll" class="btn btn-primary">Check All</button>
+      <button v-on:click="checkRemove" id="checkRemove" class="btn btn-primary" style="display:none">Check Remove</button>
       <button v-on:click="deletes" class="btn btn-primary">Delete</button>
+      </div>
+    </div>
 
       <table class="table" id="table_content">
       <thead id="lists" class="bg-secondary">
@@ -27,8 +36,8 @@
         <th>Delete</th>
       </tr>
     </thead>
-      <tr v-for="(todo,index) in todos" v-bind:class="todo.id">
-        <td class="checkbox" v-bind:id="todo.key"><input type="checkbox" @click="checkItem"></td>
+      <tr v-for="(todo,index) in todos" v-bind:class="todo.value">
+        <td class="checkbox" v-bind:id="todo.key" v-bind:class="todo.checked"><input type="checkbox" @click="checkItem(index,todo.key)"></td>
         <td class="key">{{ todo.key }}</td>
         <td class="item"><input v-bind:value="todo.value" class="input" maxlength='10' @keypress.enter="onKeypressValue(index,todo.key)" @keypress.space="onClickSpace"></td>
         
@@ -47,5 +56,8 @@
     <script src="SeesionSto.js"></script>
     <script src="localSto.js"></script>
     <script src="script.js"></script>
+    <script src="alert.js"></script>
+    <script src="Check.js"></script>
+    <script src="GetElement.js"></script>
   </body>
 </html>
