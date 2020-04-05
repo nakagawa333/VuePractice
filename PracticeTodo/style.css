@@ -28,3 +28,17 @@
 #item{
   display:flex;
 }
+
+body{
+  position: relative;
+}
+
+#toolchip{
+  display:none;
+  position: absolute;
+}
+
+#Todos{
+  margin-top:50px;
+}
+

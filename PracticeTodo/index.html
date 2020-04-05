@@ -11,18 +11,18 @@
   </head>
 
   <body>
-      <h2>Todos</h2>
-      <div id="item">
-      
+      <h2 id="Todos">Todos</h2>
+      <div id="Input">
+      <div class="d-flex">
       <div id="item_Submit">
-      <input id="input" type="text" ref="input" @change="onChange" @keypress.enter="onKeypressEnter"  maxlength='10' @keypress.space="onClickSpace" @input="onInput">
-      <button v-on:click="doAdd" id="submitButton" class="btn btn-primary">Submit</button>
+      <input id="input" v-bind:value="text" type="text" ref="input" @change="onChange" @keypress.enter="onKeypressEnter"  maxlength='10' @keypress.space="onClickSpace" @input="onInput">
+      <button v-on:click="doAdd" id="submitButton" class="btn btn-primary" @mouseenter="SubonMouseEnter">Submit</button>
       </div>
 
-      <div id="item_Button" class="float-right">
-      <button v-on:click="checkAll" id="checkAll" class="btn btn-primary">Check All</button>
-      <button v-on:click="checkRemove" id="checkRemove" class="btn btn-primary" style="display:none">Check Remove</button>
-      <button v-on:click="deletes" class="btn btn-primary">Delete</button>
+      <div id="item_Button" class="d-flex align-self-stretch">
+      <button v-on:click="checkAll" id="checkAll" class="btn btn-primary" @mouseenter="SubonMouseEnter">Check All</button>
+      <button v-on:click="checkRemove" id="checkRemove" class="btn btn-primary" style="display:none" @mouseenter="SubonMouseEnter">Check Remove</button>
+      <button v-on:click="deletes" class="btn btn-primary" @mouseenter="SubonMouseEnter">Delete</button>
       </div>
     </div>
 
@@ -37,17 +37,21 @@
       </tr>
     </thead>
       <tr v-for="(todo,index) in todos" v-bind:class="todo.value">
-        <td class="checkbox" v-bind:id="todo.key" v-bind:class="todo.checked"><input type="checkbox" @click="checkItem(index,todo.key)"></td>
+        <td class="checkbox" v-bind:id="todo.key" v-bind:class="todo.checked"><input type="checkbox" @click="checkItem(index,todo.key)" class="check"></td>
         <td class="key">{{ todo.key }}</td>
-        <td class="item"><input v-bind:value="todo.value" class="input" maxlength='10' @keypress.enter="onKeypressValue(index,todo.key)" @keypress.space="onClickSpace"></td>
+        <td class="item"><input v-bind:value="todo.value" class="input" maxlength='10' @keypress.enter="onKeypressValue(index,todo.key,todo.value)" @keypress.space="onClickSpace"></td>
         
-        <td><button @click="updateItem(index,todo.key)" type="submit" class="btn">更新</button></td>
+        <td><button @click="updateItem(index,todo.key,todo.value)" type="submit" class="btn">更新</button></td>
         <td><button @click="deleteItem(index)" type="submit" class="btn btn-outline-danger">削除</button></td>
       </tr>
       
     </table>
     </div>
 
+    <!-- ツールチップ-->
+    <div id="toolchip">
+      Hello!
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -59,5 +63,6 @@
     <script src="alert.js"></script>
     <script src="Check.js"></script>
     <script src="GetElement.js"></script>
+    <script src="ToolChip.js"></script>
   </body>
 </html>

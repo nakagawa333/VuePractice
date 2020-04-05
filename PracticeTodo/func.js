@@ -1,4 +1,4 @@
-const Regexalert = (inputVal,event) =>{
+const Regexalert = (inputVal) =>{
   let boolean = true;
   if(!(inputVal == "" || inputVal == null)){
     if(!(inputVal.match("^[亜-熙ぁ-んァ-ヶa-zA-z]"))){
@@ -8,7 +8,7 @@ const Regexalert = (inputVal,event) =>{
   }
   
   if(boolean){
-    if(inputVal == "" && event != undefined){
+    if(inputVal == ""){
       alert("空文字は、許可されていません");
       boolean = false;
     }
@@ -21,6 +21,13 @@ const Regexalert = (inputVal,event) =>{
     }
   }
   return boolean;
+}
+
+
+const disChange = (e,id) => {
+  e.toElement.style.display = "none";
+  const getEle = getId(id);
+  getEle.style.display = "block";
 }
 
 const rand = n => Math.floor(Math.random() * n) + 1;
@@ -37,10 +44,4 @@ const getKey = () => {
     key += randomChar[rand(randlen)];  
    }
   return key;
-}
-
-const include = (key,todos) => {
-  const keys = todos.map(todo => todo.key);
-  let fal = keys.includes(key);
-  return fal;
 }

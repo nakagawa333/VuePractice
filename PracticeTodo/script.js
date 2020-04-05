@@ -1,11 +1,11 @@
-let getElement = {
-  key:function(tdEle,className){
-    return tdEle.getElementsByClassName(className)[0].textContent;
-  },
+//チェックボックスにチェックがあるかを確認
+const CheckExists = (todos) => {
+  return todos.some(todo => todo.checked === true);
+}
 
-  input:function(tdEle,className){
-    return tdEle.getElementsByClassName(className)[0].value;
-  }
+//キーが存在するか確認
+const KeyExists = (todos,key) => {
+  return todos.some(todo => todo.key === key);
 }
 
 //イベントの中止
@@ -16,11 +16,13 @@ const stop = (e) => {
 let formIvent = new Vue({
   el:"#Input",
   data:{
-    todos:[]  
+    todos:[],
+    text:''  
   },
 
   created(){
     this.todos = todoStorage.fetch();
+    this.text = storageText.fetch("text");
   },
   
   computed:{
@@ -35,37 +37,42 @@ let formIvent = new Vue({
     todos:{
       handler:function(todos){
         todoStorage.save(todos);
+      },
+      deep:true
+    },
+
+    text:{
+      handler:function(text){
+        storageText.save("text",text);
       }
-    }
+    },
+    deep:true
   },
 
   methods:{
     //ページ読み込み時
     window:onload = () =>{
-      //テキストボックスに値挿入
-      (function(){
-        let getText = storageText.fetch("text");
-        let input = document.getElementById("input");
-        input.value = getText;
-      }());
-
       //チェックボックスにチェック
       Check();
     },
 
     //Submitボタンクリック時
-    doAdd:function(event){
+    doAdd:function(e){
       let value = this.$refs.input.value;
-      let Bool = Regexalert(value,event);
-      
+      let Bool = Regexalert(value);
+      //イベントの中止
+      stop(e);
+
       if(Bool){
         //キーを自動生成
         let key = getKey();
-        let incBool = include(key,this.todos);
-        if(incBool){
+        let keyExists = KeyExists(this.todos,key);
+        //キーがすでにリストに含まれる場合
+        if(keyExists){
           while(true){
             key = getKey();
-            if(!incBool){
+            keyExists = KeyExists(this.todos,key);
+            if(!keyExists){
               break;
             }
           }
@@ -76,27 +83,49 @@ let formIvent = new Vue({
           value:value,
           checked:false
         })
-        //ローカルストレージに新規値を追加
-        todoStorage.save(this.todos);
-        this.$refs.input.value = "";
-        //キーがtextであるセッションストレージを削除
-        storageText.fresh("text");
+
+
+        //テキストボックスを空に
+        this.text = "";
       }
+    },
+
+    //マウスが、Submitボタン要素に入った場合
+    SubonMouseEnter:function(e){
+      //イベントの中止
+      stop(e);
+
+      const element = e.toElement;
+      //Y軸
+      const left = element.offsetLeft;
+      //X軸
+      const top = element.offsetHeight;
+
+      const coord = {
+        left:left,
+        top:top
+      }
+
+      const tool_coord = ToolChip(coord);
+      const get_Tool = getId("toolchip");
+      get_Tool.style.display = "block";
+      get_Tool.style.left = tool_coord.left + "px";
+      get_Tool.style.top = tool_coord.top + "px";
+
     },
 
     //チェックボックスに全てチェックを入れる
     checkAll:function(e) {
-      if(this.todos.length === 0){
+      if(this.todos.leength === 0){
         alert("todoがありません!");
         return false;
       }
 
-      e.toElement.style.display = "none";
-      const getRemButton = getId("checkRemove");
-      getRemButton.style.display = "block";
+      disChange(e,"checkRemove");
 
       this.todos.forEach(todo => todo.checked = true);
       todoStorage.save(this.todos);
+
       Check();
     },
     
@@ -107,30 +136,30 @@ let formIvent = new Vue({
         return false;
       }
 
-      e.toElement.style.display = "none";
-      const getCheckAll = getId("checkAll");
-      getCheckAll.style.display = "block";
+      disChange(e,"checkAll");
 
       this.todos.forEach(todo => todo.checked = false);
+
       todoStorage.save(this.todos);
+
       Check();
     },
 
     //値が変更された場合
-    onChange:function(event){
-      let inputVal = event.target.value;
-      Regexalert(inputVal,event);
+    onChange:function(e){
+      this.text = e.srcElement.value;
     },
 
     //チェックが入っている要素を削除
     deletes:function(event){
-      let todosCount = this.todos.length;
-      let todos = this.todos.filter(todo => todo.checked == false);
+      const checkExists = CheckExists(this.todos);
 
-      if(todosCount === 0 && todos.length === 0){
+      if(!checkExists){
         alerts.check();
         return false;
       }
+
+      let todos = this.todos.filter(todo => todo.checked == false);
 
       todoStorage.remove();
       this.todos = todos;
@@ -149,28 +178,15 @@ let formIvent = new Vue({
       if(Bool){
         //キーを自動生成
         let key = getKey();
-        let incBool = include(key,this.todos);
+        let incBool = KeyExists(this.todos,key);
 
-        if(incBool){
-          while(true){
-            key = getKey();
-            if(!incBool){
-              break;
-            }
-          }
-        }
-        
         this.todos.push({
           key:key,
           value:value,
           checked:false
         })
-        //ローカルストレージに追加
-        todoStorage.save(this.todos);
-
-        this.$refs.input.value = "";
-        //キーがtextであるストレージを削除
-        storageText.fresh("text");
+        
+        this.text = "";
       }
     },
 
@@ -183,8 +199,8 @@ let formIvent = new Vue({
 
     //入力フォームに値入力時
     onInput:function(event){
-      let value = this.$refs.input.value;
-      storageText.save("text",value);
+      const value = this.$refs.input.value;
+      this.text = value;
     },
 
     //削除ボタンクリック時
@@ -193,12 +209,19 @@ let formIvent = new Vue({
     },
 
     //更新ボタンクリック時
-    updateItem:function(index,key){
-      const getEle = document.getElementById(key).parentNode;
-      const value = getEle.getElementsByClassName("input")[0].value;
+    updateItem:function(index,key,val){
+      const getKey = KeyExists(this.todos,key);
 
-      let sameTodo = this.todos.find(todo => todo.key === key);
-      sameTodo.value = value;
+      if(!getKey){
+        alert("更新に失敗しました");
+        return false;
+      }
+      
+      const getEle = getId(key).parentNode;
+      const input_val = getEle.getElementsByClassName("input")[0].value;
+
+      let sameTodo = this.todos.find(todo => todo.key === key && todo.value === val);
+      sameTodo.value = input_val;
 
       //該当するtodoを更新
       todoStorage.save(this.todos);
@@ -207,24 +230,34 @@ let formIvent = new Vue({
       alerts.update();
     },
 
-    onKeypressValue:function(index,key){
-      const getEle = document.getElementById(key).parentNode;
+    //セルでエンターキーを押した際
+    onKeypressValue:function(index,key,val){
+      const getKey = KeyExists(this.todos,key);
+
+      if(!getKey){
+        alert("更新に失敗しました");
+        return false;
+      }
+      const getEle = getId(key).parentNode;
       const value = getEle.getElementsByClassName("input")[0].value;
 
-      let sameTodo = this.todos.find(todo => todo.key === key);
-
-      if(sameTodo == undefined){
-        alert("ローカルストレージに不正な値が挿入されました");
-      }
+      let sameTodo = this.todos.find(todo => todo.key === key && todo.value === val);
       sameTodo.value = value;
 
       //ローカルストレージを更新
       todoStorage.save(this.todos);
       alerts.update();
+
+      //カーソルの位置を変更
+      try{
+        getClass("input")[index + 1].focus();
+      } catch {
+        getClass("input")[0].focus();
+      }
     },
 
+    //チェックを入れた場合
     checkItem:function(index,key){
-
       this.todos.forEach(function(todo){
         if(todo.key === key){
           //checkdがtrueの場合、false falseの場合は、true
