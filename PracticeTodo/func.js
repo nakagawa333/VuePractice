@@ -1,28 +1,15 @@
-const Regexalert = (inputVal) =>{
-  let boolean = true;
+function Regexalert(inputVal){
   if(!(inputVal == "" || inputVal == null)){
     if(!(inputVal.match("^[亜-熙ぁ-んァ-ヶa-zA-z]"))){
-      boolean = false;
       alert("文字の入力は、日本語、ローマ字のみ許可されています。");
+      return false;
     }
+    return true;
   }
-  
-  if(boolean){
-    if(inputVal == ""){
-      alert("空文字は、許可されていません");
-      boolean = false;
-    }
-  }
-  
-  if(boolean){
-    if(10 < inputVal.length){
-      boolean = false;
-      alert("文字列は、10文字まで許可されています");
-    }
-  }
-  return boolean;
-}
 
+  alert("空文字は、許可されていません");
+  return false;
+}
 
 const disChange = (e,id) => {
   e.toElement.style.display = "none";

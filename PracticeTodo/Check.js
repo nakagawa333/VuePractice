@@ -1,5 +1,5 @@
 //デバッグ用
-const log = (e) => {
+function log(e){
     console.log(e);
 }
 

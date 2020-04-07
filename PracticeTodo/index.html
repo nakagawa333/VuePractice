@@ -16,13 +16,13 @@
       <div class="d-flex">
       <div id="item_Submit">
       <input id="input" v-bind:value="text" type="text" ref="input" @change="onChange" @keypress.enter="onKeypressEnter"  maxlength='10' @keypress.space="onClickSpace" @input="onInput">
-      <button v-on:click="doAdd" id="submitButton" class="btn btn-primary" @mouseenter="SubonMouseEnter">Submit</button>
+      <button v-on:click="doAdd" id="submitButton" class="btn btn-primary" @mouseenter="SubonMouseEnter" @mouseleave="onMouseleave">Submit</button>
       </div>
 
       <div id="item_Button" class="d-flex align-self-stretch">
-      <button v-on:click="checkAll" id="checkAll" class="btn btn-primary" @mouseenter="SubonMouseEnter">Check All</button>
-      <button v-on:click="checkRemove" id="checkRemove" class="btn btn-primary" style="display:none" @mouseenter="SubonMouseEnter">Check Remove</button>
-      <button v-on:click="deletes" class="btn btn-primary" @mouseenter="SubonMouseEnter">Delete</button>
+      <button v-on:click="checkAll" id="checkAll" class="btn btn-primary" @mouseenter="SubonMouseEnter" @mouseleave="onMouseleave">Check All</button>
+      <button v-on:click="checkRemove" id="checkRemove" class="btn btn-primary" style="display:none" @mouseenter="SubonMouseEnter" @mouseleave="onMouseleave">Check Remove</button>
+      <button v-on:click="deletes" class="btn btn-primary" @mouseenter="SubonMouseEnter" @mouseleave="onMouseleave">Delete</button>
       </div>
     </div>
 
@@ -30,18 +30,17 @@
       <thead id="lists" class="bg-secondary">
       <tr>
         <th>チェック</th>
-        <th>ID</th>
         <th>Value</th>
+        <th>State</th>
         <th>Update</th>
         <th>Delete</th>
       </tr>
     </thead>
       <tr v-for="(todo,index) in todos" v-bind:class="todo.value">
         <td class="checkbox" v-bind:id="todo.key" v-bind:class="todo.checked"><input type="checkbox" @click="checkItem(index,todo.key)" class="check"></td>
-        <td class="key">{{ todo.key }}</td>
         <td class="item"><input v-bind:value="todo.value" class="input" maxlength='10' @keypress.enter="onKeypressValue(index,todo.key,todo.value)" @keypress.space="onClickSpace"></td>
-        
-        <td><button @click="updateItem(index,todo.key,todo.value)" type="submit" class="btn">更新</button></td>
+        <td class="state">State</td>
+        <td><button @click="updateItem(index,todo.key,todo.value)" type="submit" class="btn btn-outline-info">更新</button></td>
         <td><button @click="deleteItem(index)" type="submit" class="btn btn-outline-danger">削除</button></td>
       </tr>
       

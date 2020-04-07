@@ -8,8 +8,7 @@ const KeyExists = (todos,key) => {
   return todos.some(todo => todo.key === key);
 }
 
-//イベントの中止
-const stop = (e) => {
+function stop(e){
   e.preventDefault();
 }
 
@@ -56,7 +55,7 @@ let formIvent = new Vue({
       Check();
     },
 
-    //Submitボタンクリック時
+    //Submiボtタンクリック時
     doAdd:function(e){
       let value = this.$refs.input.value;
       let Bool = Regexalert(value);
@@ -108,15 +107,23 @@ let formIvent = new Vue({
 
       const tool_coord = ToolChip(coord);
       const get_Tool = getId("toolchip");
+
       get_Tool.style.display = "block";
       get_Tool.style.left = tool_coord.left + "px";
       get_Tool.style.top = tool_coord.top + "px";
 
     },
 
+    //ボタンが、マウスから離れた場合
+    onMouseleave:function(e){
+      stop(e);
+      const get_Tool = getId("toolchip");
+      get_Tool.style.display= "none";
+    },
+
     //チェックボックスに全てチェックを入れる
     checkAll:function(e) {
-      if(this.todos.leength === 0){
+      if(this.todos.length === 0){
         alert("todoがありません!");
         return false;
       }
@@ -262,7 +269,10 @@ let formIvent = new Vue({
         if(todo.key === key){
           //checkdがtrueの場合、false falseの場合は、true
           todo.checked = todo.checked == true ? false : true;
+          return true;
         }
+        
+        return false;
       })
 
       //ローカルストレージを更新
